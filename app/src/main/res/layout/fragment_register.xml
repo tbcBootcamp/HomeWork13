@@ -21,19 +21,28 @@
         android:id="@+id/recyclerview"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/btnRegister"
+        app:layout_constraintBottom_toTopOf="@+id/tvResultList"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvRegistration"
         tools:listitem="@layout/recycler_item_field" />
 
+    <TextView
+        android:id="@+id/tvResultList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:gravity="center"
+        app:layout_constraintBottom_toTopOf="@id/btnRegister"
+        app:layout_constraintTop_toBottomOf="@id/recyclerview" />
+
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnRegister"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
         android:text="Register"
         android:textSize="18sp"
-        android:layout_marginBottom="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

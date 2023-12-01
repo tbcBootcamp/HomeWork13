@@ -19,14 +19,21 @@ abstract class BaseFragment<VB : ViewBinding>(private val inflate: Inflater<VB>)
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-        Log.d("ragaca", "base fragment binding creation")
         _binding = inflate.invoke(inflater, container, false)
         return _binding?.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setUp()
+
+    }
 
     override fun onDestroyView() {
         _binding = null
         super.onDestroyView()
     }
+
+    abstract fun setUp()
+
 }

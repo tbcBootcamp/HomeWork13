@@ -1,90 +1,38 @@
 package com.example.homework13.fragments
 
 
-import android.os.Bundle
-import android.util.Log
-import android.view.View
-import android.widget.EditText
-import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.homework13.Data.FieldList
 import com.example.homework13.adapter.OuterAdapter
+import com.example.homework13.data.ItemModel
 import com.example.homework13.databinding.FragmentRegisterBinding
+import com.example.homework13.helpers.parseJsonFromAssets
 
 
 class RegisterFragment : BaseFragment<FragmentRegisterBinding>(FragmentRegisterBinding::inflate) {
+    private val fieldList: List<List<ItemModel>> by lazy {
+        parseJsonFromAssets("List.json", requireContext())
+    }
+    private lateinit var adapter: OuterAdapter
 
-    private val fieldList = FieldList().getFieldList()
-    private val fieldMap: MutableMap<Int, String> = mutableMapOf()
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        binding.recyclerview.adapter = OuterAdapter(fieldList)
-        Log.d("ragaca", "register fragment created")
-
+    override fun setUp() {
+        adapter = OuterAdapter(fieldList)
+        binding.recyclerview.adapter = adapter
         binding.recyclerview.layoutManager = LinearLayoutManager(requireContext())
-
         binding.btnRegister.setOnClickListener {
-            handleRegistration()
+            register()
         }
+
     }
 
-    private fun handleRegistration() {
-
-        var validationFailed = false
-
-
-        for (innerList in fieldList) {
-
-            for (item in innerList) {
-
-                val etValue = binding.recyclerview.findViewHolderForAdapterPosition(
-                    fieldList.indexOf(innerList))?.itemView
-                    ?.findViewById<EditText>(item.fieldId)?.text.toString()
-
-                if (!checkValidation(etValue, item.required, item.hint)) {
-
-                    validationFailed = true
-
-                    // Show an error message for the specific field
-                    Toast.makeText(
-                        requireContext(),
-                        "Field with hint: ${item.hint} is empty!!",
-                        Toast.LENGTH_LONG
-                    ).show()
-                    break // Stop the inner loop if any field is not valid
-                }
-
-
-                fieldMap[item.fieldId] = etValue
-            }
-
-            if (validationFailed) {
-                break
-            }
+    private fun register() {
+        val fieldValuesFinal: MutableList<MutableMap<Int, String>> = mutableListOf()
+        adapter.getList().forEachIndexed { index, innerList ->
+            val fieldValues = (binding.recyclerview.findViewHolderForAdapterPosition(
+                index
+            ) as OuterAdapter.OuterViewHolder).getFieldValues()
+            fieldValuesFinal.add(fieldValues)
         }
-
-
-        if (!validationFailed) {
-
-            Toast.makeText(
-                requireContext(),
-                "Registration successful!",
-                Toast.LENGTH_LONG
-            ).show()
-
-
-        }
+        binding.tvResultList.text = fieldValuesFinal.toString()
     }
-    private fun checkValidation(text: String?, isRequired: Boolean, hint: String) =
-        !(text.isNullOrEmpty() && isRequired).also {
-            if (!it) {
-                Toast.makeText(
-                    requireContext(),
-                    "Field with hint: $hint is empty!!",
-                    Toast.LENGTH_LONG
-                ).show()
-            }
-        }
 }
 
